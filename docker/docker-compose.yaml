@@ -1,0 +1,92 @@
+services:
+  mysql_master:
+    image: mysql:latest
+    container_name: mysql_master
+    hostname: mysql_master
+    environment:
+      MYSQL_ROOT_PASSWORD: ${DATABASE_PASSWORD}
+      MYSQL_DATABASE: ${DATABASE_NAME}
+      MYSQL_USER: ${DATABASE_USER}
+      MYSQL_PASSWORD: ${DATABASE_PASSWORD}
+    volumes:
+      - ./mysql/conf.d:/etc/mysql/conf.d
+      - ./mysql/init.sql:/docker-entrypoint-initdb.d/init.sql
+    command: --server-id=1 --report-host=mysql_master --loose-group_replication_local_address=172.22.0.2:33061 --loose-group_replication_bootstrap_group=on
+    ports:
+      - '3306:3306'
+    healthcheck:
+      test: ['CMD', 'mysqladmin', 'ping', '-h', 'localhost']
+      interval: 10s
+      retries: 10
+    networks:
+      wantedlab_net:
+        ipv4_address: 172.23.0.2
+
+  mysql_read_replica:
+    image: mysql:latest
+    container_name: mysql_read_replica
+    hostname: mysql_read_replica
+    environment:
+      MYSQL_ROOT_PASSWORD: ${DATABASE_PASSWORD}
+      MYSQL_DATABASE: ${DATABASE_NAME}
+      MYSQL_USER: ${DATABASE_USER}
+      MYSQL_PASSWORD: ${DATABASE_PASSWORD}
+    volumes:
+      - ./mysql/conf.d:/etc/mysql/conf.d
+    command: --server-id=2 --report-host=mysql_read_replica --loose-group_replication_local_address=172.23.0.3:33061
+    ports:
+      - '3307:3306'
+    networks:
+      wantedlab_net:
+        ipv4_address: 172.23.0.3
+
+  kafka:
+    image: confluentinc/cp-kafka:latest
+    ports:
+      - '9092:9092'
+      - '29092:29092'
+    environment:
+      KAFKA_BROKER_ID: 1
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:9092,PLAINTEXT_HOST://localhost:29092
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT
+      KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+      KAFKA_AUTO_CREATE_TOPICS_ENABLE: 'true'
+    healthcheck:
+      test: ['CMD', 'kafka-topics', '--bootstrap-server', 'localhost:9092', '--list']
+      interval: 10s
+      timeout: 10s
+      retries: 5
+    networks:
+      wantedlab_net:
+        ipv4_address: 172.23.0.11
+
+  zookeeper:
+    image: confluentinc/cp-zookeeper:latest
+    ports:
+      - '2181:2181'
+    environment:
+      ZOOKEEPER_CLIENT_PORT: 2181
+      ZOOKEEPER_TICK_TIME: 2000
+    networks:
+      wantedlab_net:
+        ipv4_address: 172.23.0.12
+
+  kafkaui:
+    image: provectuslabs/kafka-ui:latest
+    ports:
+      - '8080:8080'
+    environment:
+      KAFKA_CLUSTERS_0_NAME: local
+      KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS: kafka:9092
+    networks:
+      wantedlab_net:
+        ipv4_address: 172.23.0.13
+
+networks:
+  wantedlab_net:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.23.0.0/16

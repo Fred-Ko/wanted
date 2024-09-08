@@ -1,0 +1,122 @@
+# ------------------------------------------------------
+# THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
+# ------------------------------------------------------
+
+type Comment {
+  content: String!
+  author: String!
+  createdAt: DateTime!
+}
+
+"""
+A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date-time format.
+"""
+scalar DateTime
+
+type PageInfo {
+  hasNextPage: Boolean!
+  hasPreviousPage: Boolean!
+  startCursor: String
+  endCursor: String
+}
+
+type CommentEdge {
+  node: Comment!
+  cursor: String!
+}
+
+type CommentConnection {
+  edges: [CommentEdge!]!
+  pageInfo: PageInfo!
+}
+
+type Post {
+  id: ID!
+  title: String!
+  author: String!
+  createdAt: DateTime!
+  updatedAt: DateTime
+  postDetail: PostDetail!
+  comments(paginationInput: PaginationInput!): CommentConnection
+}
+
+input PaginationInput {
+  first: Int!
+  after: String
+}
+
+type PostEdge {
+  node: Post!
+  cursor: String!
+}
+
+type PostConnection {
+  edges: [PostEdge!]!
+  pageInfo: PageInfo!
+}
+
+type PostDetail {
+  id: ID!
+  content: String!
+}
+
+type MutationResult {
+  success: Boolean!
+  message: String
+}
+
+type Query {
+  post(input: PostQueryInput!): Post!
+  posts(input: PostsQueryInput!): PostConnection!
+}
+
+input PostQueryInput {
+  id: ID!
+}
+
+input PostsQueryInput {
+  where: PostWhereInput
+  pagination: PaginationInput!
+}
+
+input PostWhereInput {
+  title: String
+  author: String
+}
+
+type Mutation {
+  createPost(input: CreatePostInput!): MutationResult!
+  updatePost(input: UpdatePostInput!): MutationResult!
+  deletePost(input: DeletePostInput!): MutationResult!
+  createComment(input: CreateCommentInput!): MutationResult!
+}
+
+input CreatePostInput {
+  title: String!
+  postDetail: PostDetailInput!
+  author: String!
+  password: String!
+}
+
+input PostDetailInput {
+  content: String!
+}
+
+input UpdatePostInput {
+  id: ID!
+  title: String
+  content: String
+  password: String!
+}
+
+input DeletePostInput {
+  id: ID!
+  password: String!
+}
+
+input CreateCommentInput {
+  postId: ID!
+  content: String!
+  author: String!
+  parentId: ID
+}
