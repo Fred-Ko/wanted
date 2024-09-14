@@ -63,7 +63,7 @@ http://localhost:8888/graphql
 ✅ 게시물 또는 댓글 등록 시 알림 기능 - Kafka 토픽 생성 및 메시지 발행/구독 기능
 
 ## 테스트 결과
-
+```
 PostService
 findPaginatedPosts
 성공 케이스
@@ -144,9 +144,9 @@ Test Suites: 1 passed, 1 total
 Tests: 50 passed, 50 total
 Snapshots: 0 total
 Time: 1.72 s, estimated 2 s
-
+```
 ## 테스트 결과 E2E
-
+```
 PostResolver (e2e)
 게시물 조작
 ✓ 게시물을 생성하고, 조회하고, 수정하고, 삭제할 수 있어야 한다 (139 ms)
@@ -163,3 +163,4 @@ Test Suites: 1 passed, 1 total
 Tests: 7 passed, 7 total
 Snapshots: 0 total
 Time: 2.975 s, estimated 3 s
+```
