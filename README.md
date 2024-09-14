@@ -52,7 +52,7 @@ http://localhost:8888/graphql
 ---
 
 ## 구현 상태
-
+```
 ✅ DB 스키마 생성 스크립트
 ✅ 게시글 목록 API (페이지네이션 포함)
 ✅ 게시글 작성 API
@@ -61,7 +61,7 @@ http://localhost:8888/graphql
 ✅ 댓글 목록 API (페이지네이션 포함)
 ✅ 댓글 작성 API
 ✅ 게시물 또는 댓글 등록 시 알림 기능 - Kafka 토픽 생성 및 메시지 발행/구독 기능
-
+```
 ## 테스트 결과
 ```
 PostService
