@@ -17,7 +17,14 @@ export class KeywordNotificationService {
   async KeywordNotification(input: { postId: string; title: string; author: string; content: string }) {
     const { postId, title, author, content } = input;
 
-    const keywords = Array.from(new Set([...this.extractEnglishKeywords(content), ...this.extractKoreanKeywords(content)]));
+    const keywords = Array.from(
+      new Set([
+        ...this.extractEnglishKeywords(content),
+        ...this.extractKoreanKeywords(content),
+        ...this.extractEnglishKeywords(title),
+        ...this.extractKoreanKeywords(title),
+      ]),
+    );
 
     const keywordNotifications = await this.keywordNotificationRepository.findByKeywords(keywords);
 
